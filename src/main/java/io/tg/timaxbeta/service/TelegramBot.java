@@ -1,4 +1,5 @@
 package io.tg.timaxbeta.service;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import io.tg.timaxbeta.config.BotConfig;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import java.io.IOException;
 import java.io.InputStream;
 
+@Slf4j
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
     final BotConfig config;
@@ -53,12 +55,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                     break;
                 case "/commands":
 
-                    sendMessage(chatId, "/start\n/кто ты?\n/кто я?\nfacts\n/dog");
+                    sendMessage(chatId, "/start\nкто ты?\nкто я?\nfacts\n/dog");
                     break;
-                case "/кто ты?":
+                case "кто ты?":
                     sendMessage(chatId, "кто я? ну, я бот");
                     break;
-                case "/кто я?":
+                case "кто я?":
                     sendMessage(chatId, "ты гавно на палочке! хехех");
                     break;
                 case "facts":
@@ -103,6 +105,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             return joke;
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("Error occured: " + e.getMessage());
             return "Failed to fetch joke. Try again later.";
         }
     }
@@ -112,6 +115,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
         String answer = "Hi, " + name + ", nice to meet you!";
         sendMessage(chatId, answer);
+        log.info("Replied to user " + name);
 
     }
     private void sendMessage(long chaId, String textToSend){
@@ -123,6 +127,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             execute(message);
         }
         catch (TelegramApiException e) {
+            log.error("Error occured: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -156,6 +161,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             execute(photo);
         } catch (Exception e) {
+            log.error("Error occured: " + e.getMessage());
             e.printStackTrace();
         }
     }
